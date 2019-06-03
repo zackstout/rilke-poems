@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>sonnets to orpheus</title>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <input type="text" value="hello" id="in">
+    <button id="sub">Submit</button>
+
+    <div id="results"></div>
+
+    <script>
+        $(document).ready(() => {
+            $.get("/poems/2", (data, err) => {
+                console.log(data);
+            })
+        })
+
+        $("#sub").on("click", function() {
+            submit($("#in").val());
+        });
+
+        $(document).on("click", ".sub", function() {
+            // submit()
+            console.log(this.innerHTML);
+            submit(this.innerHTML);
+        });
+
+        function submit(term) {
+            console.log("click");
+            search(term);
+        }
+
+        function search(term) {
+            console.log(term);
+
+            $.get(`/search/${term}`, (data, err) => {
+                console.log(data);
+                let res = '';
+
+                data.forEach(line => {
+
+                    let linkLine = '';
+                    console.log(line.line.split(" ")) // want to filter out punc marks
+
+                    line.line.split(" ").forEach(word => {
+                        // Prob want spans with the words with classes...
+                        linkLine += `<span class="sub">${word}</span> `;
+                        // linkLine += `<a href="/search/${word}">${word}</a> `;
+                    });
+
+                    // res += `<div>${line.line} (${line.part}, ${line.title})</div>`;
+                    res += `<div>${linkLine} (${line.part}, ${line.title})</div>`;
+                })
+
+                // Wait this just works? without document.getElementbYid?????? That's crazy!!! Must be a jQuery thing..
+                results.innerHTML = res;
+            });
+        }
+    </script>
+</body>
+
+</html>
